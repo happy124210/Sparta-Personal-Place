@@ -218,5 +218,5 @@ MonoBehaviour:
   lowPosY: 1
   holeSizeMin: 1
   holeSizeMax: 3
-  topObject: {fileID: 0}
-  bottomObject: {fileID: 0}
+  topObject: {fileID: 6445310599478062771}
+  bottomObject: {fileID: 5559167098284181328}
