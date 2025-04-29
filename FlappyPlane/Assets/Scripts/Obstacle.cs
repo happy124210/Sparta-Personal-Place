@@ -22,7 +22,7 @@ public class Obstacle : MonoBehaviour
         bottomObject.localPosition = new Vector3(0, -halfHoleSize);
 
         Vector3 placePosition = lastPosition + new Vector3(widthPadding, 0); // x값은 고정으로 같이 이동하니까 padding만큼
-        placePosition.y = Random.Range(highPosY, lowPosY); // y값은 랜덤으로 지정
+        placePosition.y = Random.Range(lowPosY, highPosY); // y값은 랜덤으로 지정
 
         transform.position = placePosition;
 
