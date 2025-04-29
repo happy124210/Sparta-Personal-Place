@@ -36,7 +36,7 @@ AnimatorController:
   m_Name: Model
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: isDie
+  - m_Name: isDead
     m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -64,7 +64,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: isDie
+    m_ConditionEvent: isDead
     m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 8420885562239368406}
