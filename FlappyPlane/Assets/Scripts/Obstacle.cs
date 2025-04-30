@@ -39,10 +39,10 @@ public class Obstacle : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        Player player = collision.gameObject.GetComponent<Player>();
+        Player player = collision.GetComponent<Player>();
         if (player)
         {
             gameManager.AddScore(1);
-        }   
+        }
     }
 }
