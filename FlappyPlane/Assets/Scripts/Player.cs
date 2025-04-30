@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
     private Animator animator;
     private Rigidbody2D _rigidbody;
+    private GameManager gameManager;
 
     public float flapForce = 6f;
     public float forwardSpeed = 3f;
@@ -18,6 +19,8 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        gameManager = GameManager.Instance;
+
         animator = GetComponentInChildren<Animator>();
         _rigidbody = GetComponent<Rigidbody2D>();
 
@@ -35,7 +38,10 @@ public class Player : MonoBehaviour
         {
             if (deathCooldown <= 0f)
             {
-                // 게임 재시작
+                if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+                {
+                    gameManager.RestartGame();
+                }
             }
             else
             {
@@ -80,5 +86,7 @@ public class Player : MonoBehaviour
         isDead = true;
         deathCooldown = 1f;
         animator.SetInteger("isDead", 1);
+
+        gameManager.GameOver();
     }
 }
