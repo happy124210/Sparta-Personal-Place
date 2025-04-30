@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class Obstacle : MonoBehaviour
 {
+    private GameManager gameManager;
+
     public float highPosY = 1f;
     public float lowPosY = -1f;
     public float holeSizeMin = 1f;
@@ -12,6 +15,11 @@ public class Obstacle : MonoBehaviour
     public Transform bottomObject;
 
     private float widthPadding = 4f;
+
+    private void Start()
+    {
+        gameManager = GameManager.Instance;
+    }
 
     public Vector3 SetRandomPlace(Vector3 lastPosition, int obstacleCount)
     {
@@ -27,5 +35,14 @@ public class Obstacle : MonoBehaviour
         transform.position = placePosition;
 
         return placePosition;
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        Player player = collision.gameObject.GetComponent<Player>();
+        if (player)
+        {
+            gameManager.AddScore(1);
+        }   
     }
 }
