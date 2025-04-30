@@ -23,6 +23,9 @@ public class TheStack : MonoBehaviour
     private int stackCount = -1;
     private int comboCount = 0;
 
+    private Color prevColor;
+    private Color nextColor;
+
     private void Start()
     {
         if (originBlock == null)
@@ -30,6 +33,9 @@ public class TheStack : MonoBehaviour
             Debug.LogError("originBlock is NULL");
             return;
         }
+
+        prevColor = GetRandomColor();
+        nextColor = GetRandomColor();
 
         prevBlockPosition = Vector3.down; // 첫 블록 배치 전에 기준 위치를 아래로 설정
         SpawnBlock();
@@ -58,6 +64,7 @@ public class TheStack : MonoBehaviour
         Transform newTransform = null;
 
         newBlock = Instantiate(originBlock);
+        ColorChange(newBlock);
 
         if (newBlock == null)
         {
@@ -68,7 +75,7 @@ public class TheStack : MonoBehaviour
         newTransform = newBlock.transform;
         newTransform.parent = this.transform;
         newTransform.localPosition = prevBlockPosition + Vector3.up;
-        newTransform.rotation = Quaternion.identity;
+        newTransform.localRotation = Quaternion.identity;
         newTransform.localScale = new Vector3(stackBounds.x, 1, stackBounds.y);
 
         stackCount++;
@@ -78,5 +85,32 @@ public class TheStack : MonoBehaviour
         lastBlock = newTransform;
 
         return true;
+    }
+
+    private Color GetRandomColor()
+    {
+        float r = Random.Range(100f, 250f) / 255f;
+        float g = Random.Range(100f, 250f) / 255f;
+        float b = Random.Range(100f, 250f) / 255f;
+
+        return new Color(r, g, b);
+    }
+
+    private void ColorChange(GameObject go)
+    {
+        Color applyColor = Color.Lerp(prevColor, nextColor, (stackCount % 11) / 10f);
+        Renderer rn = go.GetComponent<Renderer>();
+        if (rn == null)
+        {
+            Debug.LogError("renderer is NULL");
+        }
+
+        rn.material.color = applyColor;
+        Camera.main.backgroundColor = applyColor - new Color(0.1f, 0.1f, 0.1f);
+        if (applyColor.Equals(nextColor))
+        {
+            prevColor = nextColor;
+            nextColor = GetRandomColor();
+        }
     }
 }
