@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,8 +10,6 @@ public class TheStack : MonoBehaviour
     private const float StackMovingSpeed = 5f; // 스택 자체의 이동 속도 (카메라)
     private const float BlockMovingSpeed = 3.5f; // 블럭 이동 속도
     private const float ErrorMargin = 0.1f; // 성공 판정 허용 오차
-
-    public GameObject originBlock = null;
 
     private Vector3 prevBlockPosition;
     private Vector3 desiredPosition;
@@ -28,6 +27,24 @@ public class TheStack : MonoBehaviour
 
     private bool isMovingX;
 
+    public GameObject originBlock = null;
+
+    public int Score { get => stackCount; }
+    
+    public int MaxCombo { get => maxCombo; }
+    private int maxCombo = 0;
+
+    public int BestScore {  get => bestScore; }
+    private int bestScore;
+
+    public int BestCombo { get => bestCombo; }
+    private int bestCombo;
+
+    private const string BestScoreKey = "bestScore";
+    private const string BestComboKey = "bestComobo";
+
+    private bool isGameOver = false;
+
     private void Start()
     {
         if (originBlock == null)
@@ -35,6 +52,9 @@ public class TheStack : MonoBehaviour
             Debug.LogError("originBlock is NULL");
             return;
         }
+
+        PlayerPrefs.GetInt(BestScoreKey, 0);
+        PlayerPrefs.GetInt(BestComboKey, 0);
 
         prevColor = GetRandomColor();
         nextColor = GetRandomColor();
@@ -46,6 +66,8 @@ public class TheStack : MonoBehaviour
 
     private void Update()
     {
+        if (isGameOver) return;
+
         if (Input.GetMouseButtonDown(0))
         {
             if (PlaceBlock())
@@ -56,13 +78,15 @@ public class TheStack : MonoBehaviour
             {
                 // 게임 오버
                 Debug.Log("GameOver");
+                UpdateScore();
+                isGameOver = true;
+                GameOverEffect();
             }
         }
 
         MoveBlock();
         transform.position = Vector3.Lerp(transform.position, desiredPosition, StackMovingSpeed * Time.deltaTime);
     }
-
 
 
     private bool SpawnBlock()
@@ -176,9 +200,11 @@ public class TheStack : MonoBehaviour
                         , lastPosition.z),
                     new Vector3(deltaX, 1, stackBounds.y));
 
+                comboCount = 0;
             }
             else
             {
+                ComboCheck();
                 lastBlock.localPosition = prevBlockPosition + Vector3.up;
             }
 
@@ -213,9 +239,12 @@ public class TheStack : MonoBehaviour
                             ? lastPosition.z + stackBounds.y / 2 + rubbleHalfScale
                             : lastPosition.z - stackBounds.y / 2 - rubbleHalfScale),
                     new Vector3(stackBounds.x, 1, deltaZ));
+
+                comboCount = 0;
             }
             else
             {
+                ComboCheck();
                 lastBlock.localPosition = prevBlockPosition + Vector3.up;
             }
         }
@@ -224,7 +253,7 @@ public class TheStack : MonoBehaviour
         return true;
     }
 
-    void CreateRubble(Vector3 pos, Vector3 scale)
+    private void CreateRubble(Vector3 pos, Vector3 scale)
     {
         GameObject go = Instantiate(lastBlock.gameObject);
         go.transform.parent = this.transform;
@@ -235,5 +264,50 @@ public class TheStack : MonoBehaviour
 
         go.AddComponent<Rigidbody>();
         go.name = "Rubble";
+    }
+
+    private void ComboCheck()
+    {
+        if (comboCount > maxCombo)
+        {
+            maxCombo = comboCount;
+
+            if (comboCount % 5 == 0)
+            {
+                Debug.Log("5 combo!");
+                stackBounds += new Vector3(0.5f, 0.5f);
+
+                stackBounds.x = (stackBounds.x > BoundSize) ? BoundSize : stackBounds.x;
+                stackBounds.y = (stackBounds.y > BoundSize) ? BoundSize : stackBounds.y;
+            }
+        }
+    }
+
+    private void UpdateScore()
+    {
+        if (bestScore < stackCount)
+        {
+            bestScore = stackCount;
+            bestCombo = maxCombo;
+        }
+
+        PlayerPrefs.SetInt(BestScoreKey, bestScore);
+        PlayerPrefs.SetInt(BestComboKey, bestCombo);
+    }
+
+    private void GameOverEffect()
+    {
+        int childCount = this.transform.childCount;
+
+        for (int i = 1; i < 20 ; i++)
+        {
+            if (childCount < i) break;
+
+            GameObject go = this.transform.GetChild(childCount - i).gameObject;
+
+            if (go.name.Equals("Rubble")) continue;
+            Rigidbody rigid = go.AddComponent<Rigidbody>();
+            rigid.AddForce((Vector3.up * Random.Range(0f, 10f) + Vector3.right * (Random.Range(0f, 10f) - 5f)) * 100f);
+        }
     }
 }
