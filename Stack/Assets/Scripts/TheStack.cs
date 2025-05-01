@@ -41,7 +41,7 @@ public class TheStack : MonoBehaviour
     private int bestCombo;
 
     private const string BestScoreKey = "bestScore";
-    private const string BestComboKey = "bestComobo";
+    private const string BestComboKey = "bestCombo";
 
     private bool isGameOver = false;
 
