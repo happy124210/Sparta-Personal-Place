@@ -26,6 +26,8 @@ public class TheStack : MonoBehaviour
     private Color prevColor;
     private Color nextColor;
 
+    private bool isMovingX;
+
     private void Start()
     {
         if (originBlock == null)
@@ -39,15 +41,25 @@ public class TheStack : MonoBehaviour
 
         prevBlockPosition = Vector3.down; // 첫 블록 배치 전에 기준 위치를 아래로 설정
         SpawnBlock();
+        SpawnBlock();
     }
 
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        MoveBlock();
+        if (PlaceBlock())
         {
-            SpawnBlock();
+            if (Input.GetMouseButtonDown(0))
+            {
+                SpawnBlock();
+            }
         }
+        else
+        {
+            Debug.Log("GameOver");
+        }
+
 
         transform.position = Vector3.Lerp(transform.position, desiredPosition, (StackMovingSpeed * Time.deltaTime));
     }
@@ -112,5 +124,81 @@ public class TheStack : MonoBehaviour
             prevColor = nextColor;
             nextColor = GetRandomColor();
         }
+    }
+
+    private void MoveBlock()
+    {
+        blockTransition += Time.deltaTime * BlockMovingSpeed;
+        float movePosition = Mathf.PingPong(blockTransition, BoundSize) - BoundSize / 2;
+        
+        if (isMovingX)
+        {
+            lastBlock.localPosition = new Vector3(movePosition * MovingBoundSize, stackCount, secondaryPosition);
+        }
+        else
+        {
+            lastBlock.localPosition = new Vector3(secondaryPosition, stackCount, movePosition * MovingBoundSize);
+        }
+    }
+
+    private bool PlaceBlock()
+    {
+        Vector3 lastPosition = lastBlock.localPosition;
+
+        if (isMovingX)
+        {
+            float deltaX = prevBlockPosition.x - lastPosition.x;
+
+            deltaX = Mathf.Abs(deltaX);
+            if (deltaX > ErrorMargin)
+            {
+                stackBounds.x -= deltaX;
+                if (stackBounds.x <= 0)
+                {
+                    return false;
+                }
+
+                float middle = (prevBlockPosition.x + lastPosition.x) / 2;
+                lastBlock.localScale = new Vector3(stackBounds.x, 1, stackBounds.y);
+
+                Vector3 tempPosition = lastBlock.localPosition;
+                tempPosition.x = middle; // 중심 옮겨준 후
+                lastBlock.localPosition = lastPosition = tempPosition;
+
+            }
+            else
+            {
+                lastBlock.localPosition = prevBlockPosition + Vector3.up;
+            }
+
+        }
+        else
+        {
+            float deltaZ = prevBlockPosition.z - lastPosition.z;
+
+            deltaZ = Mathf.Abs(deltaZ);
+            if (deltaZ > ErrorMargin)
+            {
+                stackBounds.x -= deltaZ;
+                if (stackBounds.x <= 0)
+                {
+                    return false;
+                }
+
+                float middle = (prevBlockPosition.z + lastPosition.z) / 2;
+                lastBlock.localScale = new Vector3(stackBounds.x, 1, stackBounds.y);
+
+                Vector3 tempPosition = lastBlock.localPosition;
+                tempPosition.z = middle; // 중심 옮겨준 후
+                lastBlock.localPosition = lastPosition = tempPosition;
+            }
+            else
+            {
+                lastBlock.localPosition = prevBlockPosition + Vector3.up;
+            }
+        }
+        secondaryPosition = (isMovingX) ? lastBlock.localPosition.x : lastBlock.localPosition.z;
+        
+        return true;
     }
 }
