@@ -42,7 +42,8 @@ public class UIManager : MonoBehaviour
 
     public void OnClickStart()
     {
-        ChangeState(UIState.Home);
+        theStack.Restart();
+        ChangeState(UIState.Game);
     }
 
     public void OnClickExit()
@@ -52,6 +53,17 @@ public class UIManager : MonoBehaviour
     #else
         Application.Quit();
     #endif
+    }
+
+    public void UpdateScore()
+    {
+        gameUI.SetUI(theStack.Score, theStack.Combo, theStack.MaxCombo);
+    }
+
+    public void SetScoreUI()
+    {
+        scoreUI.SetUI(theStack.Score, theStack.MaxCombo, theStack.BestCombo);
+        ChangeState(UIState.Score);
     }
     
 }

@@ -27,6 +27,7 @@ public class TheStack : MonoBehaviour
     public GameObject originBlock;
 
     public int Score { get => stackCount; }
+    public int Combo { get => comboCount; }
     
     public int MaxCombo { get => maxCombo; }
     private int maxCombo;
@@ -40,8 +41,9 @@ public class TheStack : MonoBehaviour
     private const string BestScoreKey = "bestScore";
     private const string BestComboKey = "bestCombo";
 
-    private bool isGameOver;
+    private bool isGameOver = true;
 
+    
     private void Start()
     {
         if (originBlock == null)
@@ -61,6 +63,7 @@ public class TheStack : MonoBehaviour
         SpawnBlock();
     }
 
+    
     private void Update()
     {
         if (isGameOver) return;
@@ -78,6 +81,7 @@ public class TheStack : MonoBehaviour
                 UpdateScore();
                 isGameOver = true;
                 GameOverEffect();
+                UIManager.Instance.SetScoreUI();
             }
         }
 
@@ -114,8 +118,11 @@ public class TheStack : MonoBehaviour
 
         lastBlock = newTransform;
         isMovingX = !isMovingX;
+        
+        UIManager.Instance.UpdateScore();
     }
 
+    
     private Color GetRandomColor()
     {
         float r = Random.Range(100f, 250f) / 255f;
@@ -125,6 +132,7 @@ public class TheStack : MonoBehaviour
         return new Color(r, g, b);
     }
 
+    
     private void ColorChange(GameObject go)
     {
         Color applyColor = Color.Lerp(prevColor, nextColor, (stackCount % 11) / 10f);
@@ -143,6 +151,7 @@ public class TheStack : MonoBehaviour
         }
     }
 
+    
     private void MoveBlock()
     {
         blockTransition += Time.deltaTime * BlockMovingSpeed;
@@ -153,6 +162,7 @@ public class TheStack : MonoBehaviour
             : new Vector3(secondaryPosition, stackCount, movePosition * MovingBoundSize);
     }
 
+    
     private bool PlaceBlock()
     {
         Vector3 lastPosition = lastBlock.localPosition;
@@ -240,6 +250,7 @@ public class TheStack : MonoBehaviour
         return true;
     }
 
+    
     private void CreateRubble(Vector3 pos, Vector3 scale)
     {
         GameObject go = Instantiate(lastBlock.gameObject);
@@ -253,23 +264,27 @@ public class TheStack : MonoBehaviour
         go.name = "Rubble";
     }
 
+    
     private void ComboCheck()
     {
+        comboCount++;
+        
         if (comboCount > maxCombo)
         {
             maxCombo = comboCount;
+        }
+          
+        if (comboCount % 5 == 0)
+        {
+            Debug.Log("5 combo!");
+            stackBounds += new Vector3(0.5f, 0.5f);
 
-            if (comboCount % 5 == 0)
-            {
-                Debug.Log("5 combo!");
-                stackBounds += new Vector3(0.5f, 0.5f);
-
-                stackBounds.x = (stackBounds.x > BoundSize) ? BoundSize : stackBounds.x;
-                stackBounds.y = (stackBounds.y > BoundSize) ? BoundSize : stackBounds.y;
-            }
+            stackBounds.x = (stackBounds.x > BoundSize) ? BoundSize : stackBounds.x;
+            stackBounds.y = (stackBounds.y > BoundSize) ? BoundSize : stackBounds.y;
         }
     }
 
+    
     private void UpdateScore()
     {
         if (bestScore < stackCount)
@@ -282,6 +297,7 @@ public class TheStack : MonoBehaviour
         PlayerPrefs.SetInt(BestComboKey, bestCombo);
     }
 
+    
     private void GameOverEffect()
     {
         int childCount = this.transform.childCount;
@@ -296,5 +312,39 @@ public class TheStack : MonoBehaviour
             Rigidbody rigid = go.AddComponent<Rigidbody>();
             rigid.AddForce((Vector3.up * Random.Range(0f, 10f) + Vector3.right * (Random.Range(0f, 10f) - 5f)) * 100f);
         }
+    }
+
+    
+    public void Restart()
+    {
+        Debug.Log("Restart");
+        int childCount = transform.childCount;
+
+        for (int i = 0; i < childCount; i++)
+        {
+            Destroy(transform.GetChild(i).gameObject);
+        }
+
+        isGameOver = false;
+
+        lastBlock = null;
+        desiredPosition = Vector3.zero;
+        stackBounds = new Vector3(BoundSize, BoundSize);
+
+        stackCount = -1;
+        isMovingX = true;
+        blockTransition = 0f;
+        secondaryPosition = 0f;
+
+        comboCount = 0;
+        maxCombo = 0;
+		
+        prevBlockPosition = Vector3.down;
+
+        prevColor = GetRandomColor();
+        nextColor = GetRandomColor();
+
+        SpawnBlock();
+        SpawnBlock();
     }
 }
