@@ -21,13 +21,12 @@ public class PlayerController : BaseController
         Vector2 worldPos =  camera.ScreenToWorldPoint(mousePosition);
         lookDirection = (worldPos - (Vector2)transform.position); // 보는 방향 = 마우스 방향
 
-        if (lookDirection.magnitude < .9f) // 마우스위치가 캐릭터랑 너무 겹쳐있는 경우
-        {
-            lookDirection = Vector2.zero;
-        }
-        else
-        {
-            lookDirection = lookDirection.normalized;
-        }
+        lookDirection = (lookDirection.magnitude < .9f) 
+            ? Vector2.zero 
+            : lookDirection.normalized;// 마우스 위치가 캐릭터랑 너무 겹쳐있는 경우
+
+        lookDirection = (lookDirection.magnitude < .9f) ?  Vector2.zero : lookDirection.normalized;
+
+        isAttacking = Input.GetMouseButton(0);
     }
 }

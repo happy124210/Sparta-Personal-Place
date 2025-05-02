@@ -1,7 +1,4 @@
-﻿using JetBrains.Annotations;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TheStack : MonoBehaviour
 {
@@ -15,24 +12,24 @@ public class TheStack : MonoBehaviour
     private Vector3 desiredPosition;
     private Vector3 stackBounds = new Vector2(BoundSize, BoundSize);
 
-    private Transform lastBlock = null;
-    private float blockTransition = 0f;
-    private float secondaryPosition = 0f;
+    private Transform lastBlock;
+    private float blockTransition;
+    private float secondaryPosition;
 
     private int stackCount = -1;
-    private int comboCount = 0;
+    private int comboCount;
 
     private Color prevColor;
     private Color nextColor;
 
     private bool isMovingX;
 
-    public GameObject originBlock = null;
+    public GameObject originBlock;
 
     public int Score { get => stackCount; }
     
     public int MaxCombo { get => maxCombo; }
-    private int maxCombo = 0;
+    private int maxCombo;
 
     public int BestScore {  get => bestScore; }
     private int bestScore;
@@ -43,7 +40,7 @@ public class TheStack : MonoBehaviour
     private const string BestScoreKey = "bestScore";
     private const string BestComboKey = "bestCombo";
 
-    private bool isGameOver = false;
+    private bool isGameOver;
 
     private void Start()
     {
@@ -89,26 +86,23 @@ public class TheStack : MonoBehaviour
     }
 
 
-    private bool SpawnBlock()
+    private void SpawnBlock()
     {
         if (lastBlock != null)
         {
             prevBlockPosition = lastBlock.localPosition;
         }
 
-        GameObject newBlock = null;
-        Transform newTransform = null;
-
-        newBlock = Instantiate(originBlock);
+        GameObject newBlock = Instantiate(originBlock);
         ColorChange(newBlock);
 
         if (newBlock == null)
         {
             Debug.LogError("newBlock instantiate failed");
-            return false;
+            return;
         }
 
-        newTransform = newBlock.transform;
+        Transform newTransform = newBlock.transform;
         newTransform.parent = this.transform;
         newTransform.localPosition = prevBlockPosition + Vector3.up;
         newTransform.localRotation = Quaternion.identity;
@@ -120,8 +114,6 @@ public class TheStack : MonoBehaviour
 
         lastBlock = newTransform;
         isMovingX = !isMovingX;
-
-        return true;
     }
 
     private Color GetRandomColor()
@@ -156,14 +148,9 @@ public class TheStack : MonoBehaviour
         blockTransition += Time.deltaTime * BlockMovingSpeed;
         float movePosition = Mathf.PingPong(blockTransition, BoundSize) - BoundSize / 2;
         
-        if (isMovingX)
-        {
-            lastBlock.localPosition = new Vector3(movePosition * MovingBoundSize, stackCount, secondaryPosition);
-        }
-        else
-        {
-            lastBlock.localPosition = new Vector3(secondaryPosition, stackCount, movePosition * MovingBoundSize);
-        }
+        lastBlock.localPosition = (isMovingX)
+            ? new Vector3(movePosition * MovingBoundSize, stackCount, secondaryPosition)
+            : new Vector3(secondaryPosition, stackCount, movePosition * MovingBoundSize);
     }
 
     private bool PlaceBlock()
@@ -173,7 +160,7 @@ public class TheStack : MonoBehaviour
         if (isMovingX)
         {
             float deltaX = prevBlockPosition.x - lastPosition.x;
-            bool isNegativeNum = (deltaX < 0) ? true : false;
+            bool isNegativeNum = deltaX < 0;
 
             deltaX = Mathf.Abs(deltaX);
             if (deltaX > ErrorMargin)
@@ -212,7 +199,7 @@ public class TheStack : MonoBehaviour
         else
         {
             float deltaZ = prevBlockPosition.z - lastPosition.z;
-            bool isNegativeNum = (deltaZ < 0) ? true : false;
+            bool isNegativeNum = deltaZ < 0;
 
             deltaZ = Mathf.Abs(deltaZ);
             if (deltaZ > ErrorMargin)
