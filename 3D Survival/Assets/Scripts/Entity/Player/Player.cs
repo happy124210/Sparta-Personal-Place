@@ -1,3 +1,5 @@
+using System;
+using ScriptableObjects;
 using UnityEngine;
 
 namespace Entity.Player
@@ -6,6 +8,9 @@ namespace Entity.Player
     {
         public PlayerController controller;
         public PlayerStat stat;
+        
+        public ItemData itemData;
+        public Action addItem;
 
         private void Awake()
         {
