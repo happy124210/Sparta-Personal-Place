@@ -1,11 +1,17 @@
+using System;
 using UI;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
 namespace Entity.Player
 {
-    public class PlayerStat : MonoBehaviour
+    public interface IDamageable
+    {
+        void TakeHealthDamage(int damage);
+    }
+    
+    
+    public class PlayerStat : MonoBehaviour, IDamageable
     {
         public StatUI statUI;
 
@@ -14,6 +20,7 @@ namespace Entity.Player
         private Stat Stamina { get { return statUI.Stamina; } }
 
         [SerializeField] private float noHungerHealthDecay;
+        public event Action OnTakeDamage;
 
         private void Update()
         {
@@ -48,6 +55,12 @@ namespace Entity.Player
         {
             Debug.Log("Die");
         }
-        
+
+        public void TakeHealthDamage(int damage)
+        {
+            Health.ChangeStat(damage);
+            OnTakeDamage?.Invoke();
+
+        }
     }
 }
