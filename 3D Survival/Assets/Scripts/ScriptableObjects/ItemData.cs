@@ -50,5 +50,9 @@ namespace ScriptableObjects
         [Header("Consumable")]
         [SerializeField] private ItemDataConsumable[] consumables;
         public  ItemDataConsumable[] Consumables => consumables;
+        
+        [Header("Equip")]
+        [SerializeField] private GameObject equipPrefab;
+        public GameObject EquipPrefab => equipPrefab;
     }
 }

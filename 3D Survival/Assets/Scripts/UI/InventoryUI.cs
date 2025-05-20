@@ -2,6 +2,7 @@ using System.Linq;
 using Entity.Player;
 using ScriptableObjects;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace UI
@@ -26,6 +27,8 @@ namespace UI
         
         private ItemData selectedItem;
         private int selectedIndex;
+
+        private int curEquippedIndex;
         
         private PlayerController controller;
         private PlayerStat stat;
@@ -87,9 +90,9 @@ namespace UI
         private void AddItem()
         {
             ItemData data = CharacterManager.Instance.Player.itemData;
-            
             if (data == null) Debug.LogError("data is null");
-            Debug.Log($"[Pickup] itemData = {data.name}");
+            
+            //Debug.Log($"[Pickup] itemData = {data.name}");
             
             // 아이템이 중복 가능한지 canStack
             if (data.CanStack)
@@ -97,7 +100,7 @@ namespace UI
                 ItemSlot slot = GetItemStack(data);
                 if (slot != null)
                 {
-                    Debug.Log($"[Stacked] {data.name} stacked");
+                    //Debug.Log($"[Stacked] {data.name} stacked");
                     slot.Count++;
                     UpdateUI();
                     CharacterManager.Instance.Player.itemData = null;
@@ -105,24 +108,21 @@ namespace UI
                 }
             }
             
-            // 아니라면 비어있는 슬롯 가져옴
             ItemSlot emptySlot = GetEmptySlot();
             
-            // 있다면
             if (emptySlot != null)
             {
-                Debug.Log($"[New slot] {data.name} saved");
+                //Debug.Log($"[New slot] {data.name} saved");
                 emptySlot.Item = data;
                 emptySlot.Count = 1;
                 UpdateUI();
-                Debug.Log($"[New slot] {data.name} UI Updated");
+                //Debug.Log($"[New slot] {data.name} UI Updated");
                 CharacterManager.Instance.Player.itemData = null;
                 return;
             }
             
-            // 없다면
             ThrowItem(data);
-            Debug.Log($"[Throw] {data.name} disposed");
+            //Debug.Log($"[Throw] {data.name} disposed");
             CharacterManager.Instance.Player.itemData = null;
         }
 
@@ -134,12 +134,12 @@ namespace UI
                 if (slot.Item != null)
                 {
                     slot.Set(); 
-                    Debug.Log("[UI Set] Item Updated");
+                    //Debug.Log("[UI Set] Item Updated");
                 }
                 else
                 {
                     slot.Clear();
-                    Debug.Log("[UI Set] Item Cleared");
+                    //Debug.Log("[UI Set] Item Cleared");
                 }
             }
         }
@@ -176,7 +176,7 @@ namespace UI
             selectedStatName.text = string.Empty;
             selectedStatValue.text = string.Empty;
 
-            foreach (var consumable in selectedItem.Consumables)
+            foreach (ItemDataConsumable consumable in selectedItem.Consumables)
             {
                 selectedStatName.text += consumable.Type.ToString() + "\n";
                 selectedStatValue.text += consumable.Value.ToString() + "\n";
@@ -186,6 +186,84 @@ namespace UI
             equipButton.SetActive(selectedItem.Type == ItemType.Equipable && !slots[index].IsEquipped);
             unequipButton.SetActive(selectedItem.Type == ItemType.Equipable && slots[index].IsEquipped);
             dropButton.SetActive(true);
+        }
+
+
+        public void OnUseButton()
+        {
+            if (selectedItem.Type != ItemType.Consumable) return;
+
+            foreach (ItemDataConsumable consumable in selectedItem.Consumables)
+            {
+                switch (consumable.Type)
+                {
+                    case ConsumableType.Health:
+                        stat.Heal(consumable.Value);
+                        break;
+                    
+                    case ConsumableType.Hunger:
+                        stat.Eat(consumable.Value);
+                        break;
+                }
+            }
+            
+            RemoveSelectedItem();
+        }
+
+
+        public void OnDropButton()
+        {
+            ThrowItem(selectedItem);
+            RemoveSelectedItem();
+        }
+
+
+        private void RemoveSelectedItem()
+        {
+            slots[selectedIndex].Count--;
+
+            if (slots[selectedIndex].Count <= 0)
+            {
+                slots[selectedIndex].Item = null;
+                selectedIndex = -1;
+                ClearSelectedItemWindow();
+            }
+            
+            UpdateUI();
+        }
+
+
+        public void OnEquipButton()
+        {
+            if (slots[curEquippedIndex].IsEquipped)
+            {
+                Unequip(curEquippedIndex);
+            }
+            
+            slots[selectedIndex].IsEquipped = true;
+            curEquippedIndex = selectedIndex;
+            CharacterManager.Instance.Player.equipment.EquipNew(selectedItem);
+            UpdateUI();
+            
+            SelectItem(selectedIndex);
+        }
+
+        private void Unequip(int index)
+        {
+            slots[index].IsEquipped = false;
+            CharacterManager.Instance.Player.equipment.UnEquip();
+            UpdateUI();
+
+            if (selectedIndex == index)
+            {
+                SelectItem(selectedIndex);
+            }
+        }
+
+
+        public void OnUnEquipButton()
+        {
+            Unequip(selectedIndex);
         }
     }
 }

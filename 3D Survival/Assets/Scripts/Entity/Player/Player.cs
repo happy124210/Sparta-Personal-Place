@@ -8,6 +8,7 @@ namespace Entity.Player
     {
         public PlayerController controller;
         public PlayerStat stat;
+        public Equipment equipment;
         
         public ItemData itemData;
         public Action addItem;

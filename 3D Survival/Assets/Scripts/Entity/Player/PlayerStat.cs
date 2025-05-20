@@ -39,19 +39,19 @@ namespace Entity.Player
         }
 
 
-        private void Heal(float amount)
+        public void Heal(float amount)
         {
             Health.ChangeStat(amount);
         }
         
         
-        private void Eat(float amount)
+        public void Eat(float amount)
         {
             Hunger.ChangeStat(amount);
         }
         
         
-        private void Die()
+        public void Die()
         {
             Debug.Log("Die");
         }
@@ -60,7 +60,6 @@ namespace Entity.Player
         {
             Health.ChangeStat(damage);
             OnTakeDamage?.Invoke();
-
         }
     }
 }
