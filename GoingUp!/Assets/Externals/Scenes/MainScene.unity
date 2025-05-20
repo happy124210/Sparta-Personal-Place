@@ -3139,7 +3139,7 @@ MonoBehaviour:
   m_XAxis:
     Value: 0
     m_SpeedMode: 0
-    m_MaxSpeed: 100
+    m_MaxSpeed: 200
     m_AccelTime: 0.3
     m_DecelTime: 0.5
     m_InputAxisName: Mouse X
@@ -6267,7 +6267,7 @@ GameObject:
   - component: {fileID: 1591962854}
   - component: {fileID: 1591962853}
   - component: {fileID: 1591962852}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Ground '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6460,6 +6460,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  jumpPower: 10
 --- !u!114 &1603074844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8012,6 +8016,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1603074840}
     m_Modifications:
+    - target: {fileID: 185160433139728343, guid: 60770bdb4dc667c45bea53db0339dc05, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1438546959266459337, guid: 60770bdb4dc667c45bea53db0339dc05, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -8058,7 +8066,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3388840107371486329, guid: 60770bdb4dc667c45bea53db0339dc05, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3688722674990396637, guid: 60770bdb4dc667c45bea53db0339dc05, type: 3}
       propertyPath: m_IsActive
@@ -8066,11 +8074,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3716317115370018060, guid: 60770bdb4dc667c45bea53db0339dc05, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4108629495336714649, guid: 60770bdb4dc667c45bea53db0339dc05, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4116401870129570769, guid: 60770bdb4dc667c45bea53db0339dc05, type: 3}
       propertyPath: m_IsActive

@@ -24,7 +24,6 @@ namespace Entity.Player
 
         private float curCamRotX;
         private Vector2 mouseDelta;
-        
 
         private Rigidbody _rigidBody;
         private CapsuleCollider _collider;

@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +11,10 @@ namespace Entity.Player
         [Header("Movement")] 
         [SerializeField] private float moveSpeed;
         private Vector2 curMovementInput;
+        [SerializeField] private LayerMask groundLayerMask;
+
+        [Header("Look")] 
+        [SerializeField] private float jumpPower;
     
         private Rigidbody _rigidBody;
         private CapsuleCollider _collider;
@@ -83,6 +88,37 @@ namespace Entity.Player
                     curMovementInput = Vector2.zero;
                     return;
             }
+        }
+        
+        
+        public void OnJump(InputAction.CallbackContext context)
+        {
+            bool isRunning = curMovementInput.magnitude > 0.5f;
+
+            if (context.phase == InputActionPhase.Started && IsGrounded())
+            {
+                _rigidBody.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
+                _animator.Play(isRunning ? "JumpWhileRunning" : "Jump");
+            }
+        }
+
+        /// <summary>
+        /// 플레이어가 땅에 있는지 검사한다.
+        /// </summary>
+        /// <returns>땅에 있으면 true, 아니면 false</returns>
+        private bool IsGrounded()
+        {
+            Vector3 basePosition = transform.position + (transform.up * 0.01f);
+
+            Ray[] rays = new Ray[4]
+            {
+                new Ray(basePosition + (transform.forward * 0.2f), Vector3.down),
+                new Ray(basePosition + (-transform.forward * 0.2f), Vector3.down),
+                new Ray(basePosition + (transform.right * 0.2f), Vector3.down),
+                new Ray(basePosition + (-transform.right * 0.2f), Vector3.down),
+            };
+
+            return rays.Any(ray => Physics.Raycast(ray, 0.3f, groundLayerMask));
         }
     }
 }
