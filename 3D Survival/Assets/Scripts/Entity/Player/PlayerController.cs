@@ -19,6 +19,7 @@ namespace Entity.Player
         
         [Header("Inventory")]
         [SerializeField] private bool canLook = true;
+        public bool CanLook => canLook;
         public Action inventory;
 
         private float curCamRotX;

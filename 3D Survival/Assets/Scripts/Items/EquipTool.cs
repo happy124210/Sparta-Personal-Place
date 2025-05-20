@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Items
@@ -15,5 +16,30 @@ namespace Items
         [Header("Combat")] 
         [SerializeField] private bool doesDealDamage;
         [SerializeField] private int damage;
+        
+        private static readonly int Attack = Animator.StringToHash("Attack");
+        
+        private Animator animator;
+
+        private void Start()
+        {
+            animator = GetComponent<Animator>();
+            if (animator == null) Debug.LogError("No animator attached to " + name);
+        }
+
+
+        public override void OnAttackInput()
+        {
+            if (attacking) return;
+            attacking = true;
+            animator.SetTrigger(Attack);
+            Invoke(nameof(OnCanAttack), attackRate);
+        }
+
+
+        private void OnCanAttack()
+        {
+            attacking = false;
+        }
     }
 }

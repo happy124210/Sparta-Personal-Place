@@ -2,6 +2,7 @@ using System;
 using Items;
 using ScriptableObjects;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Entity.Player
 {
@@ -34,6 +35,15 @@ namespace Entity.Player
             
             Destroy(curEquip.gameObject);
             curEquip = null;
+        }
+
+
+        public void OnAttackInput(InputAction.CallbackContext context)
+        {
+            if (context.phase == InputActionPhase.Performed && curEquip != null && controller.CanLook == true)
+            {
+                curEquip.OnAttackInput();
+            }
         }
     }
 }
