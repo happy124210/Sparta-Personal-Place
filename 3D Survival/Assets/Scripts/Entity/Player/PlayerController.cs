@@ -1,3 +1,5 @@
+using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,9 +16,14 @@ namespace Entity.Player
         [SerializeField] private float maxXLook;
         [SerializeField] private float jumpPower;
         [SerializeField] private float lookSensitivity;
+        
+        [Header("Inventory")]
+        [SerializeField] private bool canLook = true;
+        public Action inventory;
 
         private float curCamRotX;
         private Vector2 mouseDelta;
+        
 
         private Rigidbody _rigidBody;
         private CapsuleCollider _collider;
@@ -46,6 +53,7 @@ namespace Entity.Player
 
         private void LateUpdate()
         {
+            if (!canLook) return;
             CameraLook();
         }
 
@@ -126,6 +134,24 @@ namespace Entity.Player
 
             //Debug.Log("Not grounded");
             return false;
+        }
+        
+        
+        public void OnInventory(InputAction.CallbackContext context)
+        {
+            if (context.phase == InputActionPhase.Started)
+            {
+                inventory?.Invoke();
+                ToggleCursor();
+            }
+        }
+
+
+        private void ToggleCursor()
+        {
+            bool toggle = Cursor.lockState == CursorLockMode.Locked;
+            Cursor.lockState = toggle ? CursorLockMode.None : CursorLockMode.Locked;
+            canLook = !toggle;
         }
     }
 }

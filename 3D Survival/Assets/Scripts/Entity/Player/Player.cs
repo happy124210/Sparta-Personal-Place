@@ -11,6 +11,7 @@ namespace Entity.Player
         
         public ItemData itemData;
         public Action addItem;
+        public Transform dropPosition;
 
         private void Awake()
         {

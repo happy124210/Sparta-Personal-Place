@@ -15,7 +15,6 @@ namespace Items
     {
         [SerializeField] private ItemData data;
 
-
         public string GetInteractPrompt()
         {
             string str = $"{data.DisplayName}\n{data.Description}";
