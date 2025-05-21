@@ -12,23 +12,16 @@ namespace Entity.Player
     
     public class Interaction : MonoBehaviour
     {
-        [SerializeField] private float checkRate = 0.05f;
+        [SerializeField] private float checkRate;
         [SerializeField] private float maxCheckDistance;
         [SerializeField] private LayerMask layerMask;
-        [SerializeField] private GameObject curInteractGameObject;
         
         [SerializeField] private TextMeshProUGUI promptText;
-        [SerializeField] private Camera cam;
         
+        [SerializeField] private GameObject curInteractGameObject;
         private IInteractable curInteractable;
         private float lastCheckTime;
         
-        
-        private void Start()
-        {
-            cam = Camera.main;
-        }
-
 
         private void Update()
         {
@@ -36,22 +29,24 @@ namespace Entity.Player
             
             lastCheckTime = Time.time;
             
-            Ray ray = cam.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
-            RaycastHit hit;
+            Vector3 rayOrigin = transform.position + Vector3.up * 0.5f;
+            Vector3 rayDir = transform.forward;
 
-            if (Physics.Raycast(ray, out hit, maxCheckDistance, layerMask))
+            if (Physics.Raycast(rayOrigin, rayDir, out RaycastHit hit, maxCheckDistance, layerMask))
             {
                 if (hit.collider.gameObject == curInteractGameObject) return;
+
                 curInteractGameObject = hit.collider.gameObject;
                 curInteractable = curInteractGameObject.GetComponent<IInteractable>();
-                
-                SetPromptText();
+
+                if (curInteractable != null)
+                    SetPromptText();
+                else
+                    Clear();
             }
-            else 
+            else
             {
-                curInteractGameObject= null;
-                curInteractable = null;
-                promptText.gameObject.SetActive(false);
+                Clear();
             }
         }
 
@@ -63,14 +58,20 @@ namespace Entity.Player
         }
         
         
+        private void Clear()
+        {
+            curInteractGameObject = null;
+            curInteractable = null;
+            promptText.gameObject.SetActive(false);
+        }
+        
+        
         public void OnInteractInput(InputAction.CallbackContext context)
         {
             if (context.phase != InputActionPhase.Started || curInteractable == null) return;
             
             curInteractable.OnInteract();
-            curInteractGameObject = null;
-            curInteractable = null;
-            promptText.gameObject.SetActive(false);
+            Clear();
         }
     }
 }
