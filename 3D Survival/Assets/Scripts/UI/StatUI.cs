@@ -20,6 +20,4 @@ namespace UI
             CharacterManager.Instance.Player.stat.statUI = this;
         }
     }
-    
-    
 }

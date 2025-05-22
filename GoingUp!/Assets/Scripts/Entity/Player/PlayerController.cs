@@ -10,8 +10,9 @@ namespace Entity.Player
 
         [Header("Movement")] 
         [SerializeField] private float moveSpeed;
-        private Vector2 curMovementInput;
         [SerializeField] private LayerMask groundLayerMask;
+        
+        private Vector2 curMovementInput;
 
         [Header("Look")] 
         [SerializeField] private float jumpPower;
@@ -94,14 +95,14 @@ namespace Entity.Player
         public void OnJump(InputAction.CallbackContext context)
         {
             bool isRunning = curMovementInput.magnitude > 0.5f;
+            bool canJump = CharacterManager.Instance.Player.stat.TryUseStamina();
 
-            if (context.phase == InputActionPhase.Started && IsGrounded())
-            {
-                _rigidBody.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
-                _animator.Play(isRunning ? "JumpWhileRunning" : "Jump");
-            }
+            if (context.phase != InputActionPhase.Started || !IsGrounded() || !canJump) return;
+            
+            _rigidBody.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
+            _animator.Play(isRunning ? "JumpWhileRunning" : "Jump");
         }
-
+        
         /// <summary>
         /// 플레이어가 땅에 있는지 검사한다.
         /// </summary>
