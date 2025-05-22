@@ -16,8 +16,8 @@ namespace Items
 
         public void OnInteract()
         {
-            Debug.Log("획득 " + gameObject.name);
-            // TODO: 인벤토리 추가
+            CharacterManager.Instance.Player.itemData = data;
+            CharacterManager.Instance.Player.addItem?.Invoke();
             Destroy(gameObject);
         }
     }

@@ -9,10 +9,10 @@ namespace Entity.Player
     {
         public PlayerController controller;
         public PlayerStat stat;
+        public QuickSlotUI quickslotUI;
         
         public ItemData itemData;
         public Action addItem;
-        public Transform dropPosition;
 
         private void Awake()
         {
