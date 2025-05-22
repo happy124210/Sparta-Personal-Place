@@ -1,3 +1,4 @@
+using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -14,6 +15,7 @@ namespace Entity.Player
         [SerializeField] private Stat stamina;
         public Stat Stamina => stamina;
         
+        [Header("Jump")]
         private const float JumpStaminaCost = -10f;
 
 
@@ -54,6 +56,24 @@ namespace Entity.Player
             health.Change(-amount);
             if (health.IsEmpty)
                 Debug.Log("플레이어 사망!");
+        }
+        
+        
+        public void ApplyEffect(PassiveEffect[] effects)
+        {
+            foreach (PassiveEffect effect in effects)
+            {
+                switch (effect.Type)
+                {
+                    case PassiveType.Health:
+                        health.Change(effect.Value);
+                        break;
+                    
+                    case PassiveType.Stamina:
+                        stamina.Change(effect.Value);
+                        break;
+                }
+            }
         }
     }
 }

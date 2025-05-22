@@ -11,10 +11,8 @@ namespace ScriptableObjects
 
     public enum PassiveType
     {
-        Speed,
-        JumpPower,
         Stamina,
-        Heart
+        Health
     }
     
     [Serializable]

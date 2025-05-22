@@ -1,3 +1,4 @@
+using Entity.Player;
 using UnityEngine;
 using UnityEngine.UI;
 using ScriptableObjects;
@@ -52,7 +53,7 @@ namespace UI
             {
                 case ItemType.Passive:
                     Debug.Log($"Passive item: {item.DisplayName} 사용됨");
-                    // TODO: 상태 적용
+                    CharacterManager.Instance.Player.stat.ApplyEffect(item.PassiveEffects);
                     Clear();
                     break;
                 
@@ -60,7 +61,6 @@ namespace UI
                     Debug.Log($"Key item: {item.DisplayName} 사용 불가");
                     break;
             }
-            
         }
     }
 }

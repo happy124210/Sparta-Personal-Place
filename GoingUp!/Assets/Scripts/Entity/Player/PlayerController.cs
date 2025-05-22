@@ -15,7 +15,8 @@ namespace Entity.Player
         private Vector2 curMovementInput;
 
         [Header("Look")] 
-        [SerializeField] private float jumpPower;
+        
+        [SerializeField] private float jumpPower = 4;
     
         private Rigidbody _rigidBody;
         private CapsuleCollider _collider;
