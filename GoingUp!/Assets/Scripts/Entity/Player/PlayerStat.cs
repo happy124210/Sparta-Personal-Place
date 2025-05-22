@@ -14,7 +14,7 @@ namespace Entity.Player
         [SerializeField] private Stat stamina;
         public Stat Stamina => stamina;
         
-        private const float JumpStaminaCost = 10f;
+        private const float JumpStaminaCost = -10f;
 
 
         private void Start()
@@ -40,6 +40,12 @@ namespace Entity.Player
         public bool TryUseStamina()
         {
             return (stamina.CurValue >= JumpStaminaCost);
+        }
+
+
+        public void UseStamina()
+        {
+            stamina.Change(JumpStaminaCost);
         }
         
         

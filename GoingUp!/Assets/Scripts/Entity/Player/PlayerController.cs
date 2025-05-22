@@ -99,6 +99,7 @@ namespace Entity.Player
 
             if (context.phase != InputActionPhase.Started || !IsGrounded() || !canJump) return;
             
+            CharacterManager.Instance.Player.stat.UseStamina();
             _rigidBody.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
             _animator.Play(isRunning ? "JumpWhileRunning" : "Jump");
         }
