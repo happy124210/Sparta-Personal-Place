@@ -24,6 +24,8 @@ namespace Entity.Player
         private CapsuleCollider _collider;
         private Animator _animator;
         private Camera cam;
+        
+        [SerializeField] private ParticleSystem particle;
 
         private void Awake()
         {
@@ -144,8 +146,10 @@ namespace Entity.Player
 
         private IEnumerator ApplySpeedBoost(float value, float duration)
         {
+            particle.Play();
             moveSpeed += value;
             yield return new WaitForSeconds(duration);
+            particle.Stop();
             moveSpeed -= value;
         }
         
