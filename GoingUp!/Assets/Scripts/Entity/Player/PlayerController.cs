@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Linq;
+using Items;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -122,6 +124,37 @@ namespace Entity.Player
             };
 
             return rays.Any(ray => Physics.Raycast(ray, 0.3f, groundLayerMask));
+        }
+
+
+        public void ApplyActiveEffect(ActiveItem item)
+        {
+            switch (item.ActiveType)
+            {
+                case ActiveType.JumpPower:
+                    StartCoroutine(ApplyJumpBoost(item.Value, item.Duration));
+                    break;
+                
+                case ActiveType.Speed:
+                    StartCoroutine(ApplySpeedBoost(item.Value, item.Duration));
+                    break;
+            }
+        }
+
+
+        private IEnumerator ApplySpeedBoost(float value, float duration)
+        {
+            moveSpeed += value;
+            yield return new WaitForSeconds(duration);
+            moveSpeed -= value;
+        }
+        
+        
+        private IEnumerator ApplyJumpBoost(float value, float duration)
+        {
+            jumpPower += value;
+            yield return new WaitForSeconds(duration);
+            jumpPower -= value;
         }
     }
 }

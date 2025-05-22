@@ -1,3 +1,4 @@
+using Entity.Player;
 using UnityEngine;
 
 namespace Items
@@ -5,24 +6,25 @@ namespace Items
     public enum ActiveType
     {
         Speed,
-        JumpPower,
-        Stamina,
-        Heart
+        JumpPower
     }
     
     public class ActiveItem : MonoBehaviour
     {
         
         [SerializeField] private ActiveType activeType;
+        public ActiveType ActiveType => activeType;
         [SerializeField] private float value;
+        public float Value => value;
         [SerializeField] private float duration;
+        public float Duration => duration;
 
         private void OnTriggerEnter(Collider other)
         {
             if (!other.CompareTag("Player")) return;
             
+            CharacterManager.Instance.Player.controller.ApplyActiveEffect(this);
             Debug.Log($"{activeType} +{value} for {duration}s");
-            // TODO: 효과 적용
             Destroy(gameObject);
         }
     }
