@@ -42,9 +42,6 @@ namespace ScriptableObjects
         [SerializeField] private Sprite icon;
         public Sprite Icon => icon;
 
-        [SerializeField] private GameObject dropPrefab;
-        public GameObject DropPrefab => dropPrefab;
-
         [Header("Passive")]
         [SerializeField] private PassiveEffect[] passiveEffects;
         public PassiveEffect[] PassiveEffects => passiveEffects;

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 04dbb78b03a41d24a8523b51139fbd43, type: 3}
-  m_Name: FirstAid
+  m_Name: Battery
   m_EditorClassIdentifier: 
-  displayName: "\uAD6C\uAE09\uC0C1\uC790"
-  description: "\uC0AC\uC6A9 \uC2DC \uCCB4\uB825\uC744 \uC804\uBD80 \uD68C\uBCF5\uD569\uB2C8\uB2E4."
+  displayName: "\uBC30\uD130\uB9AC"
+  description: "\uC0AC\uC6A9 \uC2DC \uC2A4\uD0DC\uBBF8\uB098\uB97C \uC804\uBD80 \uD68C\uBCF5\uD569\uB2C8\uB2E4"
   type: 0
-  icon: {fileID: 21300000, guid: caa8a359116be45448b6d1411262262e, type: 3}
+  icon: {fileID: 21300000, guid: 1277c91ff0af095428cc824c45e9adb9, type: 3}
   passiveEffects:
-  - type: 1
+  - type: 0
     value: 100
   keyId: 
