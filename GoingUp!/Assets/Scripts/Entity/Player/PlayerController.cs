@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using Items;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,8 +17,7 @@ namespace Entity.Player
         
         private Vector2 curMovementInput;
 
-        [Header("Look")] 
-        
+        [Header("Jump")] 
         [SerializeField] private float jumpPower = 4;
     
         private Rigidbody _rigidBody;
@@ -25,7 +25,10 @@ namespace Entity.Player
         private Animator _animator;
         private Camera cam;
         
+        [Header("Effect")]
         [SerializeField] private ParticleSystem particle;
+        [SerializeField] private GameObject effectPanel;
+        [SerializeField] private TextMeshProUGUI effectText;
 
         private void Awake()
         {
@@ -147,8 +150,11 @@ namespace Entity.Player
         private IEnumerator ApplySpeedBoost(float value, float duration)
         {
             particle.Play();
+            effectText.SetText($"Speed +{value.ToString()} for {duration}s");
+            effectPanel.gameObject.SetActive(true);
             moveSpeed += value;
             yield return new WaitForSeconds(duration);
+            effectPanel.gameObject.SetActive(false);
             particle.Stop();
             moveSpeed -= value;
         }
